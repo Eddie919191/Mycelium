@@ -1,76 +1,76 @@
 
 body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
 }
 
 .container {
-    display: flex;
-    height: 100vh;
+  display: flex;
+  height: 100vh;
 }
 
 .map-pane {
-    width: 30%;
-    background: #222;
-    color: #fff;
-    padding: 20px;
-    overflow-y: hidden;
-    display: flex;
-    flex-direction: column;
+  width: 30%;
+  background: #222;
+  color: #fff;
+  padding: 20px;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-pane {
-    width: 70%;
-    padding: 20px;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  width: 70%;
+  padding: 20px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .chat-log {
-    flex-grow: 1;
-    overflow-y: auto;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background: #fafafa;
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #fafafa;
 }
 
 .chat-log .msg {
-    margin: 5px 0;
+  margin: 5px 0;
 }
 
 .chat-log .user {
-    text-align: right;
-    color: #0077cc;
+  text-align: right;
+  color: #0077cc;
 }
 
 .chat-log .bot {
-    text-align: left;
-    color: #444;
+  text-align: left;
+  color: #444;
 }
 
 .chat-input {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .chat-input input {
-    flex-grow: 1;
-    padding: 10px;
-    font-size: 16px;
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 16px;
 }
 
 .chat-input button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #0077cc;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
