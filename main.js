@@ -13,7 +13,7 @@ const db = firebase.firestore();
 
 let currentNodeId = null;
 
-window.onload = () => {
+window.onload = async () => {
   const elements = [];
   const snapshot = await db.collection("nodes").get();
   snapshot.forEach(doc => {
