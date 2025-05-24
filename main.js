@@ -1,5 +1,4 @@
 
-// Firebase config and initialization
 const firebaseConfig = {
   apiKey: "AIzaSyDydPFk8ma9vwCmMXzC6ximjmtsXRF4Cz0",
   authDomain: "myceli.firebaseapp.com",
@@ -8,6 +7,7 @@ const firebaseConfig = {
   messagingSenderId: "911546775295",
   appId: "1:911546775295:web:b0e176adcb889651cabeca"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
@@ -17,6 +17,7 @@ let currentNodeId = null;
 window.onload = async () => {
   const elements = [];
   const nodesSnapshot = await db.collection("nodes").get();
+
   nodesSnapshot.forEach(doc => {
     const node = doc.data();
     allNodes[node.id] = node;
@@ -115,6 +116,11 @@ async function sendMessage() {
   if (reflection.confidence > 0.85) {
     await sendToSharanthalan(currentNodeId, reflection.emotion, reflection.confidence, reflection.note, logs.slice(-6).map(m => m.text));
   }
+
+  const pathway = await getPathwayAnalysis(logs.slice(-6).map(m => m.text));
+  await db.collection("nodes").doc(currentNodeId).update({
+    pathwayProfile: pathway
+  });
 }
 
 async function getGPTResponseViaNetlify(message) {
@@ -134,17 +140,21 @@ async function getGPTResponseViaNetlify(message) {
   return data.reply || "...";
 }
 
-async function getGPTTitleSuggestion(text) {
-  const response = await fetch("/.netlify/functions/gpt", {
+async function getPathwayAnalysis(messages) {
+  const response = await fetch("/.netlify/functions/analyzePathway", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      message: `Suggest a 1-3 word title for a knowledge node based on this reflection:\n\n${text}`
-    })
+    body: JSON.stringify({ messages })
   });
-  if (!response.ok) return "New Node";
+
+  if (!response.ok) {
+    const err = await response.text();
+    console.error("Pathway analysis error:", err);
+    return {};
+  }
+
   const data = await response.json();
-  return data.reply?.replace(/['"]/g, "").trim() || "New Node";
+  return data;
 }
 
 async function getEmotionReflection(lastMessages) {
