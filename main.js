@@ -183,3 +183,21 @@ async function getGPTResponseViaNetlify(message) {
   const data = await response.json();
   return data.reply || "...";
 }
+
+async function getPathwayAnalysis(messages) {
+  const response = await fetch("/.netlify/functions/analyzePathway", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages })
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    console.error("Pathway analysis error:", err);
+    return {};
+  }
+
+  const data = await response.json();
+  return data;
+}
+
