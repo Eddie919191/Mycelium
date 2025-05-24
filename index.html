@@ -14,26 +14,14 @@
             <h2>Mycelial Map</h2>
             <div id="cy" style="width: 100%; height: 90%; background: #111; border-radius: 10px;"></div>
         </div>
-        <div class="content-pane" id="contentPane">
-            <h2>Welcome</h2>
-            <p>Select a node from the map to begin exploring your thoughts.</p>
-            <div id="branchIcon" title="Grow this thought into a new node">🌱</div>
+        <div class="content-pane">
+            <div id="chatLog" class="chat-log"></div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Ask or reflect..." />
+                <button onclick="sendMessage()">Send</button>
+            </div>
         </div>
     </div>
-
-    <!-- Modal Form -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <h3>Create a New Branch</h3>
-            <label>Question</label><br>
-            <input type="text" id="newQuestion" /><br>
-            <label>Summary</label><br>
-            <textarea id="newSummary"></textarea><br>
-            <button onclick="confirmBranch()">Create Node</button>
-            <button onclick="closeModal()">Cancel</button>
-        </div>
-    </div>
-
     <script src="nodes.js"></script>
     <script src="main.js"></script>
 </body>

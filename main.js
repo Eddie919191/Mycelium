@@ -1,10 +1,8 @@
 
 let currentNodeId = null;
+let chatLogs = {};
 
 window.onload = () => {
-    const contentPane = document.getElementById('contentPane');
-    const branchIcon = document.getElementById('branchIcon');
-
     const elements = [];
     for (const nodeId in nodes) {
         const node = nodes[nodeId];
@@ -46,43 +44,35 @@ window.onload = () => {
     });
 
     cy.on('tap', 'node', (evt) => {
-        const nodeId = evt.target.id();
-        const node = nodes[nodeId];
-        currentNodeId = nodeId;
-        branchIcon.style.display = 'block';
-        contentPane.innerHTML = `
-            <h2>${node.question}</h2>
-            <p><strong>Summary:</strong> ${node.summary}</p>
-            <p><strong>Children:</strong> ${node.children.map(id => nodes[id]?.question || '').join(', ')}</p>
-            <div id="branchIcon" title="Grow this thought into a new node">🌱</div>
-        `;
-        document.getElementById('branchIcon').onclick = openModal;
+        currentNodeId = evt.target.id();
+        loadChat(currentNodeId);
     });
 };
 
-function openModal() {
-    document.getElementById('modal').style.display = 'flex';
+function loadChat(nodeId) {
+    const chatLog = document.getElementById('chatLog');
+    chatLog.innerHTML = '';
+    const logs = chatLogs[nodeId] || [];
+    logs.forEach(log => {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'msg ' + log.sender;
+        msgDiv.textContent = log.text;
+        chatLog.appendChild(msgDiv);
+    });
 }
 
-function closeModal() {
-    document.getElementById('modal').style.display = 'none';
-}
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text || !currentNodeId) return;
 
-function confirmBranch() {
-    const question = document.getElementById('newQuestion').value.trim();
-    const summary = document.getElementById('newSummary').value.trim();
-    if (!question || !summary || !currentNodeId) return;
+    chatLogs[currentNodeId] = chatLogs[currentNodeId] || [];
+    chatLogs[currentNodeId].push({ sender: 'user', text: text });
 
-    const newId = question.toLowerCase().replace(/[^a-z0-9]/g, '-');
-    nodes[newId] = {
-        id: newId,
-        question: question,
-        summary: summary,
-        children: []
-    };
-    nodes[currentNodeId].children.push(newId);
+    // Example bot response
+    const response = "That's a thoughtful reflection.";
+    chatLogs[currentNodeId].push({ sender: 'bot', text: response });
 
-    alert(`New node "${question}" created under "${nodes[currentNodeId].question}"!`);
-    closeModal();
-    location.reload(); // For demo purposes - will redraw map with new structure
+    input.value = '';
+    loadChat(currentNodeId);
 }
