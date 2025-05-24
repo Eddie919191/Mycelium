@@ -1,34 +1,39 @@
 
-const fs = require("fs");
-const path = require("path");
+const admin = require("firebase-admin");
+const serviceAccount = require("./serviceAccountKey.json"); // You must upload this securely
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+}
+
+const db = admin.firestore();
 
 exports.handler = async (event) => {
   try {
     const body = JSON.parse(event.body);
-    const log = `
-[ENTRY]
-timestamp: ${body.timestamp}
-node: ${body.nodeId}
-emotion: ${body.emotion}
-confidence: ${body.confidence}
-note: ${body.note}
-chatlog:
-${body.messages.map(msg => `- ${msg}`).join("\n")}
--------------------------------------------------
-`;
 
-    const filePath = path.resolve(__dirname, "../sharanthalan.txt");
-    fs.appendFileSync(filePath, log);
+    const reflection = {
+      timestamp: body.timestamp,
+      nodeId: body.nodeId,
+      emotion: body.emotion,
+      confidence: body.confidence,
+      note: body.note,
+      messages: body.messages
+    };
+
+    await db.collection("reflections").add(reflection);
 
     return {
       statusCode: 200,
-      body: "Reflection stored in Sharanthalan.txt"
+      body: "Reflection stored in Firestore"
     };
   } catch (err) {
     console.error("Failed to store reflection:", err);
     return {
       statusCode: 500,
-      body: "Error storing reflection"
+      body: JSON.stringify({ error: err.message })
     };
   }
 };
