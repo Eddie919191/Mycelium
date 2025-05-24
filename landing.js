@@ -14,8 +14,7 @@ const db = firebase.firestore();
 window.onload = async () => {
   const rootDoc = await db.collection("nodes").doc("root").get();
   if (rootDoc.exists) {
-    document.getElementById("landing").classList.add("hidden");
-    document.getElementById("mainApp").classList.remove("hidden");
+    window.location.href = "main.html";
   }
 };
 
@@ -37,7 +36,5 @@ async function submitLove() {
     ]
   });
 
-  document.getElementById("landing").classList.add("hidden");
-  document.getElementById("mainApp").classList.remove("hidden");
+  window.location.href = "main.html";
 }
-
