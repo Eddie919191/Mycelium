@@ -2,6 +2,7 @@
   "name": "myceli",
   "version": "1.0.0",
   "dependencies": {
-    "firebase-admin": "^11.10.1"
+    "firebase-admin": "^11.10.1",
+    "node-fetch": "^2.6.9"
   }
 }
