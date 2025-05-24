@@ -30,6 +30,14 @@ async function submitLove() {
     children: []
   });
 
+  await db.collection("chats").doc("root").set({
+    messages: [
+      { sender: "user", text: loveInput },
+      { sender: "bot", text: "This is beautiful. From this seed, your map will grow." }
+    ]
+  });
+
   document.getElementById("landing").classList.add("hidden");
   document.getElementById("mainApp").classList.remove("hidden");
 }
+
