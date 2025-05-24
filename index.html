@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,8 +17,23 @@
         <div class="content-pane" id="contentPane">
             <h2>Welcome</h2>
             <p>Select a node from the map to begin exploring your thoughts.</p>
+            <div id="branchIcon" title="Grow this thought into a new node">🌱</div>
         </div>
     </div>
+
+    <!-- Modal Form -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h3>Create a New Branch</h3>
+            <label>Question</label><br>
+            <input type="text" id="newQuestion" /><br>
+            <label>Summary</label><br>
+            <textarea id="newSummary"></textarea><br>
+            <button onclick="confirmBranch()">Create Node</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
     <script src="nodes.js"></script>
     <script src="main.js"></script>
 </body>
