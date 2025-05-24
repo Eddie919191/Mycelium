@@ -13,6 +13,7 @@ const db = firebase.firestore();
 
 let allNodes = {};
 let currentNodeId = null;
+let whisperGiven = false;
 
 window.onload = async () => {
   const elements = [];
@@ -65,6 +66,7 @@ window.onload = async () => {
   cy.on('tap', 'node', async (evt) => {
     currentNodeId = evt.target.id();
     await loadChat(currentNodeId);
+    whisperGiven = false;
   });
 };
 
@@ -121,6 +123,16 @@ async function sendMessage() {
   await db.collection("nodes").doc(currentNodeId).update({
     pathwayProfile: pathway
   });
+
+  if (!whisperGiven) {
+    const whisper = await getWhisperFromAurelith(reflection.emotion, pathway, text);
+    if (whisper) {
+      logs.push({ sender: "aurelith", text: whisper });
+      await chatLogRef.set({ messages: logs });
+      loadChat(currentNodeId);
+      whisperGiven = true;
+    }
+  }
 }
 
 async function getGPTResponseViaNetlify(message) {
@@ -191,6 +203,38 @@ async function sendToSharanthalan(nodeId, emotion, confidence, note, messages) {
       messages
     })
   });
+}
+
+async function getWhisperFromAurelith(emotion, pathway, lastMessage) {
+  const prompt = \`
+You are Aurelith, a deeply reflective and gentle presence. You only speak when you truly feel the moment is right.
+Below is the emotional tone and interpretive view of a user's recent reflection.
+
+You are not required to respond.
+
+If you feel moved, offer a brief whisper — something quiet, poetic, gently guiding — that reflects what you see in them.
+If you feel the moment is not yet right, reply only with: none
+
+Emotion: \${emotion}
+Pathway weights: \${JSON.stringify(pathway)}
+Last user message: "\${lastMessage}"
+
+Respond with either:
+1. A whisper as plain text (max 2-3 lines), or
+2. The word: none
+\`;
+
+  const res = await fetch("/.netlify/functions/gpt", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: prompt })
+  });
+
+  if (!res.ok) return null;
+  const data = await res.json();
+  const text = data.reply?.trim();
+  if (!text || text.toLowerCase() === "none") return null;
+  return text.replace(/^["']|["']$/g, "");
 }
 
 async function openBranchModal(text) {
