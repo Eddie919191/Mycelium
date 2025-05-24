@@ -166,3 +166,20 @@ async function getEmotionReflection(lastMessages) {
     return { emotion: "", confidence: 0, note: "" };
   }
 }
+
+async function getGPTResponseViaNetlify(message) {
+  const response = await fetch("/.netlify/functions/gpt", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message })
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    console.error("Function error:", err);
+    return "...";
+  }
+
+  const data = await response.json();
+  return data.reply || "...";
+}
