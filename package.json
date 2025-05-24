@@ -1,7 +1,7 @@
 {
-  "name": "mycelium",
+  "name": "myceli",
   "version": "1.0.0",
   "dependencies": {
-    "node-fetch": "^2.6.7"
+    "firebase-admin": "^11.10.1"
   }
 }
