@@ -69,10 +69,19 @@ async function loadChat(nodeId) {
 
   if (doc.exists) {
     const logs = doc.data().messages || [];
-    logs.forEach(log => {
+    logs.forEach((log, index) => {
       const msgDiv = document.createElement('div');
       msgDiv.className = 'msg ' + log.sender;
       msgDiv.textContent = log.text;
+
+      if (log.sender === 'bot') {
+        const btn = document.createElement('button');
+        btn.textContent = '🌱';
+        btn.className = 'branch-btn';
+        btn.onclick = () => openBranchModal(log.text);
+        msgDiv.appendChild(btn);
+      }
+
       chatLog.appendChild(msgDiv);
     });
   }
@@ -111,4 +120,25 @@ async function getGPTResponseViaNetlify(message) {
 
   const data = await response.json();
   return data.reply || "...";
+}
+
+function openBranchModal(text) {
+  const title = prompt("🌱 New Node Title:", text.slice(0, 60));
+  if (!title) return;
+
+  const newId = title.toLowerCase().replace(/[^a-z0-9]/g, "-");
+  const summary = text;
+  nodes[newId] = {
+    id: newId,
+    question: title,
+    summary: summary,
+    children: []
+  };
+
+  if (!nodes[currentNodeId].children.includes(newId)) {
+    nodes[currentNodeId].children.push(newId);
+  }
+
+  alert(`Branched to: ${title}`);
+  location.reload(); // to update map
 }
