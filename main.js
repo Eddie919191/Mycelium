@@ -8,6 +8,12 @@ const firebaseConfig = {
   appId: "1:911546775295:web:b0e176adcb889651cabeca"
 };
 
+firebase.initializeApp(firebaseConfig); // ✅ First initialize Firebase
+const db = firebase.firestore();        // ✅ Then define db
+
+let allNodes = {};
+let currentNodeId = null;
+
 window.onload = async () => {
   const elements = [];
   const nodesSnapshot = await db.collection("nodes").get();
