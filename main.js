@@ -169,7 +169,8 @@ Respond as:
 
   if (!res.ok) return { emotion: "", confidence: 0, note: "" };
   const data = await res.json();
-  return JSON.parse(data.reply);
+  const cleaned = data.reply.replace(/```json|```/g, "").trim();
+  return JSON.parse(cleaned);
 }
 
 async function sendToSharanthalan(nodeId, emotion, confidence, note, messages) {
