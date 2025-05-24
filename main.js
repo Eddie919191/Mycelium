@@ -17,13 +17,6 @@ let currentNodeId = null;
 
 window.onload = async () => {
   const elements = [];
-  const snapshot = await db.collection("nodes").get();
-  snapshot.forEach(doc => {
-    const node = doc.data();
-    allNodes[node.id] = node;
-    elements.push({ data: { id: node.id, label: node.question } });
-  });
-  
 const snapshot = await db.collection("nodes").get();
 snapshot.forEach(doc => {
   const node = doc.data();
