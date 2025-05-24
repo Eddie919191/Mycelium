@@ -216,7 +216,7 @@ async function sendToSharanthalan(nodeId, emotion, confidence, note, messages) {
 }
 
 async function getWhisperFromAurelith(emotion, pathway, lastMessage) {
-  const prompt = \`
+  const prompt = `
 You are Aurelith, a deeply reflective and gentle presence. You only speak when you truly feel the moment is right.
 Below is the emotional tone and interpretive view of a user's recent reflection.
 
