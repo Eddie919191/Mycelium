@@ -9,7 +9,6 @@ const firebaseConfig = {
   appId: "1:911546775295:web:b0e176adcb889651cabeca"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
@@ -85,14 +84,35 @@ async function sendMessage() {
   const text = input.value.trim();
   if (!text || !currentNodeId) return;
 
-  const docRef = db.collection("chats").doc(currentNodeId);
-  const doc = await docRef.get();
+  const chatLogRef = db.collection("chats").doc(currentNodeId);
+  const doc = await chatLogRef.get();
   const logs = doc.exists ? doc.data().messages : [];
-
   logs.push({ sender: 'user', text: text });
-  logs.push({ sender: 'bot', text: "That's a thoughtful reflection." });
 
-  await docRef.set({ messages: logs });
+  const response = await getGPT4oResponse(text);
+  logs.push({ sender: 'bot', text: response });
+
+  await chatLogRef.set({ messages: logs });
   input.value = '';
   loadChat(currentNodeId);
+}
+
+async function getGPT4oResponse(userInput) {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + OPENAI_API_KEY  // <- Insert securely at runtime
+    },
+    body: JSON.stringify({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: "You are a gentle, reflective guide who responds thoughtfully to user reflections." },
+        { role: "user", content: userInput }
+      ]
+    })
+  });
+
+  const data = await response.json();
+  return data.choices?.[0]?.message?.content || "..." ;
 }
