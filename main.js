@@ -8,29 +8,22 @@ const firebaseConfig = {
   appId: "1:911546775295:web:b0e176adcb889651cabeca"
 };
 
-let allNodes = {};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-let currentNodeId = null;
-
 window.onload = async () => {
   const elements = [];
-const nodesSnapshot = await db.collection("nodes").get();
-nodesSnapshot.forEach(doc => {
-  const node = doc.data();
-  allNodes[node.id] = node;
-  elements.push({ data: { id: node.id, label: node.question } });
-});
+  const nodesSnapshot = await db.collection("nodes").get();
 
-for (const nodeId in allNodes) {
-  const node = allNodes[nodeId];
-  node.children.forEach(childId => {
-    elements.push({ data: { source: node.id, target: childId } });
+  nodesSnapshot.forEach(doc => {
+    const node = doc.data();
+    allNodes[node.id] = node;
+    elements.push({ data: { id: node.id, label: node.question } });
   });
 
-
+  for (const nodeId in allNodes) {
+    const node = allNodes[nodeId];
+    node.children.forEach(childId => {
+      elements.push({ data: { source: node.id, target: childId } });
+    });
+  }
 
   const cy = cytoscape({
     container: document.getElementById('cy'),
