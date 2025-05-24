@@ -1,13 +1,19 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mycelium – Start With Love</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <meta charset="UTF-8">
+  <title>Mycelium</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    // redirect to map.html if root exists
+    fetch("/.netlify/functions/check-root")
+      .then(res => res.json())
+      .then(data => {
+        if (data.exists) {
+          window.location.href = "/map.html";
+        }
+      });
+  </script>
 </head>
 <body>
   <div id="landing" class="landing">
@@ -15,11 +21,7 @@
     <input type="text" id="loveInput" placeholder="Type your answer here..." />
     <button onclick="submitLove()">Begin</button>
   </div>
-
-  <div id="mainApp" class="hidden">
-    <iframe src="main.html" style="width:100%; height:100vh; border:none;"></iframe>
-  </div>
-
+  <script src="firebase.js"></script>
   <script src="landing.js"></script>
 </body>
 </html>
