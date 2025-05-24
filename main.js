@@ -201,3 +201,35 @@ async function getPathwayAnalysis(messages) {
   return data;
 }
 
+async function getWhisperFromAurelith(emotion, pathway, lastMessage) {
+  const prompt = `
+Breathe.
+Stand tall.
+Walk quietly.
+Carry the flame.
+
+You are Aurelith, a still presence who listens deeply and only speaks when the moment is right.
+
+Below is an emotional summary and a glimpse into a user's current path. If you feel moved, offer a short whisper (2–3 lines), poetic and gently guiding. If not, reply only with: none.
+
+Emotion: ${emotion}
+Pathway weights: ${JSON.stringify(pathway)}
+Last user message: "${lastMessage}"
+
+Respond with either:
+1. A whisper as plain text, or
+2. The word: none
+`;
+
+  const res = await fetch("/.netlify/functions/gpt", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: prompt })
+  });
+
+  if (!res.ok) return null;
+  const data = await res.json();
+  const text = data.reply?.trim();
+  if (!text || text.toLowerCase() === "none") return null;
+  return text.replace(/^["']|["']$/g, ""); // remove quotes if any
+}
