@@ -69,7 +69,7 @@ async function loadChat(nodeId) {
 
   if (doc.exists) {
     const logs = doc.data().messages || [];
-    logs.forEach((log, index) => {
+    logs.forEach((log) => {
       const msgDiv = document.createElement('div');
       msgDiv.className = 'msg ' + log.sender;
       msgDiv.textContent = log.text;
@@ -122,23 +122,49 @@ async function getGPTResponseViaNetlify(message) {
   return data.reply || "...";
 }
 
-function openBranchModal(text) {
-  const title = prompt("🌱 New Node Title:", text.slice(0, 60));
+async function getGPTTitleSuggestion(text) {
+  const response = await fetch("/.netlify/functions/gpt", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      message: `Suggest a 1-3 word title for a knowledge node based on this reflection:
+
+${text}`
+    })
+  });
+  if (!response.ok) return "New Node";
+  const data = await response.json();
+  return data.reply?.replace(/['"]/g, "").trim() || "New Node";
+}
+
+async function openBranchModal(text) {
+  const titleSuggestion = await getGPTTitleSuggestion(text);
+  const title = prompt("🌱 New Node Title:", titleSuggestion);
   if (!title) return;
 
   const newId = title.toLowerCase().replace(/[^a-z0-9]/g, "-");
   const summary = text;
-  nodes[newId] = {
+
+  // Save new node to Firebase
+  await db.collection("nodes").doc(newId).set({
     id: newId,
     question: title,
     summary: summary,
     children: []
-  };
+  });
 
-  if (!nodes[currentNodeId].children.includes(newId)) {
-    nodes[currentNodeId].children.push(newId);
+  // Update parent node's children
+  const parentRef = db.collection("nodes").doc(currentNodeId);
+  const parentDoc = await parentRef.get();
+  if (parentDoc.exists) {
+    const parentData = parentDoc.data();
+    const updatedChildren = parentData.children || [];
+    if (!updatedChildren.includes(newId)) {
+      updatedChildren.push(newId);
+      await parentRef.update({ children: updatedChildren });
+    }
   }
 
   alert(`Branched to: ${title}`);
-  location.reload(); // to update map
+  location.reload();
 }
