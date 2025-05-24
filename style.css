@@ -5,7 +5,6 @@ body {
   background-color: #fdf6f0;
   color: #333;
 }
-
 .landing {
   display: flex;
   flex-direction: column;
@@ -15,12 +14,10 @@ body {
   text-align: center;
   padding: 20px;
 }
-
 .landing h1 {
   font-size: 24px;
   margin-bottom: 20px;
 }
-
 .landing input {
   width: 300px;
   padding: 10px;
@@ -29,7 +26,6 @@ body {
   border-radius: 5px;
   border: 1px solid #ccc;
 }
-
 .landing button {
   font-size: 18px;
   padding: 10px 20px;
@@ -38,4 +34,73 @@ body {
   border-radius: 5px;
   color: white;
   cursor: pointer;
+}
+.container {
+  display: flex;
+  height: 100vh;
+}
+.map-pane {
+  width: 30%;
+  background: #222;
+  color: #fff;
+  padding: 20px;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.content-pane {
+  width: 70%;
+  padding: 20px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.chat-log {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #fafafa;
+}
+.chat-log .msg {
+  margin: 5px 0;
+  position: relative;
+}
+.chat-log .user {
+  text-align: right;
+  color: #0077cc;
+}
+.chat-log .bot {
+  text-align: left;
+  color: #444;
+}
+.chat-input {
+  display: flex;
+  gap: 10px;
+}
+.chat-input input {
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 16px;
+}
+.chat-input button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.branch-btn {
+  margin-left: 10px;
+  background-color: #cce6ff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 3px 6px;
+  font-size: 14px;
 }

@@ -1,18 +1,5 @@
-console.log("Loading landing...");
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 
-window.onload = async () => {
-  console.log("Checking if root node exists...");
-  const rootDoc = await db.collection("nodes").doc("root").get();
-  console.log("Got Firestore response:", rootDoc.exists);
-  if (rootDoc.exists) {
-    console.log("Redirecting to main.html...");
-    window.location.href = "main.html";
-  } else {
-    console.log("No root node found — staying on landing.");
-  }
-};
+console.log("Landing loaded");
 
 const firebaseConfig = {
   apiKey: "AIzaSyDydPFk8ma9vwCmMXzC6ximjmtsXRF4Cz0",
@@ -25,6 +12,18 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+
+window.onload = async () => {
+  console.log("Checking if root node exists...");
+  const rootDoc = await db.collection("nodes").doc("root").get();
+  console.log("Got Firestore response:", rootDoc.exists);
+  if (rootDoc.exists) {
+    console.log("Redirecting to /main.html...");
+    window.location.replace("/main.html");
+  } else {
+    console.log("No root node found. Awaiting input...");
+  }
+};
 
 async function submitLove() {
   const loveInput = document.getElementById("loveInput").value.trim();
@@ -44,5 +43,6 @@ async function submitLove() {
     ]
   });
 
-  window.location.href = "main.html";
+  console.log("Root saved. Redirecting...");
+  window.location.replace("/main.html");
 }
