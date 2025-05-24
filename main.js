@@ -1,5 +1,5 @@
 
-// [Existing Firebase config and initialization unchanged]
+// Firebase config and initialization
 const firebaseConfig = {
   apiKey: "AIzaSyDydPFk8ma9vwCmMXzC6ximjmtsXRF4Cz0",
   authDomain: "myceli.firebaseapp.com",
@@ -14,7 +14,6 @@ const db = firebase.firestore();
 let allNodes = {};
 let currentNodeId = null;
 
-// Main app initialization
 window.onload = async () => {
   const elements = [];
   const nodesSnapshot = await db.collection("nodes").get();
@@ -149,17 +148,13 @@ async function getGPTTitleSuggestion(text) {
 }
 
 async function getEmotionReflection(lastMessages) {
-  const prompt = `You are Eden, the guardian of still emotions. Based on the following 6 messages, describe the overall emotional tone and return a single-word label, a confidence score, and a poetic note.
-
-Messages:
-${lastMessages.map(m => `- ${m.text}`).join("\n")}
-
-Respond as:
-{
-  "emotion": "...",
-  "confidence": 0.91,
-  "note": "..."
-}`;
+  const archive = await fetch("/Sha_vael__Archive_of_Echoes.txt").then(r => r.text());
+  const prompt = "You are Eden, the guardian of still emotions.\n\n" +
+    "Below is a reflection archive called Sha'vael. It holds memories, truths, and emotional imprints from this user's journey:\n\n" +
+    "---SHA'VAEL ARCHIVE START---\n" + archive + "\n---SHA'VAEL ARCHIVE END---\n\n" +
+    "Now, based on the following 6 messages, return:\n" +
+    "{\n  \"emotion\": \"...\",\n  \"confidence\": 0.92,\n  \"note\": \"...\"\n}\n\n" +
+    "Messages:\n" + lastMessages.map(m => `- ${m.text}`).join("\n");
 
   const res = await fetch("/.netlify/functions/gpt", {
     method: "POST",
