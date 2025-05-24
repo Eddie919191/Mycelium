@@ -24,12 +24,19 @@ window.onload = async () => {
     elements.push({ data: { id: node.id, label: node.question } });
   });
   
-  for (const nodeId in allNodes) {
-    const node = allNodes[nodeId];
-    node.children.forEach(childId => {
-      elements.push({ data: { source: node.id, target: childId } });
-    });
-  }
+const snapshot = await db.collection("nodes").get();
+snapshot.forEach(doc => {
+  const node = doc.data();
+  allNodes[node.id] = node;
+  elements.push({ data: { id: node.id, label: node.question } });
+});
+
+for (const nodeId in allNodes) {
+  const node = allNodes[nodeId];
+  node.children.forEach(childId => {
+    elements.push({ data: { source: node.id, target: childId } });
+  });
+
 
 
   const cy = cytoscape({
