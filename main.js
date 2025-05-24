@@ -97,7 +97,7 @@ async function sendMessage() {
 }
 
 async function getGPTResponseViaNetlify(message) {
-  const response = await fetch("/.netlify/functions/gpt", {
+  const response = await fetch("netlify/functions/gpt", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message })
