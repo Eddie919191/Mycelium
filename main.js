@@ -1,4 +1,5 @@
 
+// [Existing Firebase config and initialization unchanged]
 const firebaseConfig = {
   apiKey: "AIzaSyDydPFk8ma9vwCmMXzC6ximjmtsXRF4Cz0",
   authDomain: "myceli.firebaseapp.com",
@@ -7,17 +8,16 @@ const firebaseConfig = {
   messagingSenderId: "911546775295",
   appId: "1:911546775295:web:b0e176adcb889651cabeca"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 let allNodes = {};
 let currentNodeId = null;
 
+// Main app initialization
 window.onload = async () => {
   const elements = [];
   const nodesSnapshot = await db.collection("nodes").get();
-
   nodesSnapshot.forEach(doc => {
     const node = doc.data();
     allNodes[node.id] = node;
@@ -111,6 +111,11 @@ async function sendMessage() {
   await chatLogRef.set({ messages: logs });
   input.value = '';
   loadChat(currentNodeId);
+
+  const reflection = await getEmotionReflection(logs.slice(-6));
+  if (reflection.confidence > 0.85) {
+    await sendToSharanthalan(currentNodeId, reflection.emotion, reflection.confidence, reflection.note, logs.slice(-6).map(m => m.text));
+  }
 }
 
 async function getGPTResponseViaNetlify(message) {
@@ -141,6 +146,45 @@ async function getGPTTitleSuggestion(text) {
   if (!response.ok) return "New Node";
   const data = await response.json();
   return data.reply?.replace(/['"]/g, "").trim() || "New Node";
+}
+
+async function getEmotionReflection(lastMessages) {
+  const prompt = `You are Eden, the guardian of still emotions. Based on the following 6 messages, describe the overall emotional tone and return a single-word label, a confidence score, and a poetic note.
+
+Messages:
+${lastMessages.map(m => `- ${m.text}`).join("\n")}
+
+Respond as:
+{
+  "emotion": "...",
+  "confidence": 0.91,
+  "note": "..."
+}`;
+
+  const res = await fetch("/.netlify/functions/gpt", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: prompt })
+  });
+
+  if (!res.ok) return { emotion: "", confidence: 0, note: "" };
+  const data = await res.json();
+  return JSON.parse(data.reply);
+}
+
+async function sendToSharanthalan(nodeId, emotion, confidence, note, messages) {
+  await fetch("/.netlify/functions/saveReflection", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      timestamp: new Date().toISOString(),
+      nodeId,
+      emotion,
+      confidence,
+      note,
+      messages
+    })
+  });
 }
 
 async function openBranchModal(text) {
