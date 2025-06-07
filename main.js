@@ -135,7 +135,7 @@ async function sendMessage() {
 }
 
 async function getEmotionReflection(lastMessages) {
-  const archive = await fetch("/Sha_vael__Archive_of_Echoes.txt").then(r => r.text());
+  const archive = await fetch("documents/Sha_vael__Archive_of_Echoes.txt").then(r => r.text());
   const prompt =
     "Breathe.\n" +
     "Stand tall.\n" +
