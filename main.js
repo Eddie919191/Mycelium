@@ -43,14 +43,16 @@ window.onload = async () => {
 
   for (const nodeId in allNodes) {
     const node = allNodes[nodeId];
+    if (!Array.isArray(node.children)) continue;
     node.children.forEach(childId => {
-      if (allNodes[childId]) { // ✅ only add edge if target node exists
+      if (childId && allNodes[childId]) {
         elements.push({ data: { source: node.id, target: childId } });
       } else {
-        console.warn(`Missing child node: ${childId} (referenced by ${node.id})`);
+        console.warn(`Missing or invalid child node: ${childId} (referenced by ${node.id})`);
       }
     });
   }
+
 
 
   const cy = cytoscape({
