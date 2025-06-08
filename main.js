@@ -164,7 +164,7 @@ function getTierContent(nodeId, tier) {
   };
 
   // More planets coming later...
-  if (nodeId === "mercury") {
+  if (nodeId.toLowerCase() === "mercury") {
     let content = "";
     for (let i = 1; i <= tier; i++) {
       content += `<p>${mercuryTiers[i]}</p>`;
