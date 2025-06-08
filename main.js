@@ -35,7 +35,7 @@ window.onload = async () => {
     const node = doc.data();
     allNodes[node.id] = node;
     if (node.question) {
-      elements.push({ data: { id: node.id, label: node.question } });
+    elements.push({ data: { id: node.id, label: node.question || node.id } });
     } else {
       console.warn(`Node ${node.id} is missing a question field.`);
     }
