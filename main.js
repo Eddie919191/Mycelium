@@ -7,12 +7,32 @@ const firebaseConfig = {
   appId: "1:911546775295:web:b0e176adcb889651cabeca"
 };
 
+import { initializeApp } from "firebase/app";
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
 let allNodes = {};
 let currentNodeId = null;
 let whisperGiven = false;
+
+async function getUserTier(userId, nodeId) {
+  const docRef = doc(db, "progress", `${userId}_${nodeId}`);
+  const docSnap = await getDoc(docRef);
+  return docSnap.exists() ? docSnap.data().tier : 1; // Default to Tier 1
+}
+
+async function updateUserTier(userId, nodeId, newTier) {
+  const docRef = doc(db, "progress", `${userId}_${nodeId}`);
+  await setDoc(docRef, { tier: newTier });
+}
+
 
 window.onload = async () => {
   const elements = [];
@@ -95,6 +115,56 @@ async function loadChat(nodeId) {
     });
   }
 }
+
+function renderInfoCard(nodeId, tier) {
+  const container = document.getElementById("info-card-container"); // Create this div in HTML
+  container.innerHTML = ""; // Clear previous content
+
+  const title = document.createElement("h2");
+  title.textContent = `🌍 Info: ${nodeId}`;
+
+  const content = document.createElement("div");
+  content.className = "info-tier";
+  content.innerHTML = getTierContent(nodeId, tier); // Logic below
+
+  container.appendChild(title);
+  container.appendChild(content);
+
+  if (tier < 4) {
+    const expandBtn = document.createElement("button");
+    expandBtn.id = "expandTierBtn";
+    expandBtn.textContent = "🌱 Expand to next tier";
+    expandBtn.onclick = async () => {
+      const user = auth.currentUser;
+      if (!user) return alert("Please log in.");
+      const nextTier = tier + 1;
+      await updateUserTier(user.uid, nodeId, nextTier);
+      renderInfoCard(nodeId, nextTier);
+    };
+    container.appendChild(expandBtn);
+  }
+}
+
+function getTierContent(nodeId, tier) {
+  const mercuryTiers = {
+    1: `✨ Mercury is the smallest planet and closest to the Sun. It’s a rocky, cratered world with wild temperatures!`,
+    2: `🌍 Mercury is about 4,880 km wide and has no moons. It can reach +430°C during the day and -180°C at night.`,
+    3: `📚 Mercury has a massive iron core, thin crust, and is in a 3:2 spin-orbit resonance. Its orbit helped prove Einstein’s theory of relativity.`,
+    4: `🌌 Mercury is a fossil of planetary formation, holding the secrets of heat, silence, and cosmic mathematics.`
+  };
+
+  // More planets coming later...
+  if (nodeId === "mercury") {
+    let content = "";
+    for (let i = 1; i <= tier; i++) {
+      content += `<p>${mercuryTiers[i]}</p>`;
+    }
+    return content;
+  }
+
+  return `<p>No info available for ${nodeId}</p>`;
+}
+
 
 async function sendMessage() {
   const input = document.getElementById('chatInput');
