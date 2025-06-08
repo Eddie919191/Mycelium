@@ -12,8 +12,6 @@ import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -83,10 +81,16 @@ window.onload = async () => {
   });
 
   cy.on('tap', 'node', async (evt) => {
-    currentNodeId = evt.target.id();
-    await loadChat(currentNodeId);
-    whisperGiven = false;
-  });
+  currentNodeId = evt.target.id();
+  await loadChat(currentNodeId);
+  whisperGiven = false;
+
+  const user = auth.currentUser;
+  if (user) {
+    const tier = await getUserTier(user.uid, currentNodeId);
+    renderInfoCard(currentNodeId, tier);
+  }
+});
 };
 
 async function loadChat(nodeId) {
@@ -164,6 +168,13 @@ function getTierContent(nodeId, tier) {
 
   return `<p>No info available for ${nodeId}</p>`;
 }
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const tier = await getUserTier(user.uid, "mercury");
+    renderInfoCard("mercury", tier);
+  }
+});
 
 
 async function sendMessage() {
