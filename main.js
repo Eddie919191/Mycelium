@@ -34,7 +34,7 @@ window.onload = async () => {
   nodesSnapshot.forEach(doc => {
     const node = doc.data();
     allNodes[node.id] = node;
-    elements.push({ data: { id: node.id, label: node.question } });
+    elements.push({ data: { id: node.id, label: node.question || node.id } });
   });
 
   for (const nodeId in allNodes) {
