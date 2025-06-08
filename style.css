@@ -104,3 +104,47 @@ body {
   padding: 3px 6px;
   font-size: 14px;
 }
+#info-card-container {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #aaa;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  transition: all 0.4s ease;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#info-card-container h2 {
+  margin-top: 0;
+  font-size: 1.5em;
+  color: #aaddff;
+  text-align: center;
+}
+
+.info-tier p {
+  margin: 10px 0;
+  line-height: 1.6;
+  font-size: 1em;
+  color: #e6f1ff;
+}
+
+#expandTierBtn {
+  display: block;
+  margin: 20px auto 0 auto;
+  padding: 10px 20px;
+  background-color: #44aaff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+#expandTierBtn:hover {
+  background-color: #3399dd;
+}
