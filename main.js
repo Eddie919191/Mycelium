@@ -164,12 +164,13 @@ function getTierContent(nodeId, tier) {
   return `<p>No info available for ${nodeId}</p>`;
 }
 
-onAuthStateChanged(auth, async (user) => {
+firebase.auth().onAuthStateChanged(async (user) => {
   if (user) {
     const tier = await getUserTier(user.uid, "mercury");
     renderInfoCard("mercury", tier);
   }
 });
+
 
 
 async function sendMessage() {
